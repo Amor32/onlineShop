@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>My Net Store</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/public/stylesheets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+
+<div class="flex-container">
+    <header>
+        <img src="./public/images/logos/bricklogo.jpg" width="100" height="100" class="logo" style="float: left">
+        <h1>My Net Store</h1>
+    </header>
+
+    <div class="nav">
+        <ul>
+            <!--<li class="home"><a href="#">Home</a></li>-->
+            <!--<li class="tutorials"><a class="active" href="#">Tutorials</a></li>-->
+            <li class="catalog"><a href="/">Catalog</a></li>
+            <li class="about"><a href="#">About</a></li>
+            <li class="news"><a href="/Orders">Orders</a></li>
+            <li class="contact"><a href="/Admin">Admin</a></li>
+        </ul>
+    </div>
+
+    <!--<div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Clients</a>
+        <a href="#">Contact</a>
+    </div>-->
+
+    <!--<h2>Animated Sidenav Example</h2>
+    <p>Click on the element below to open the side navigation menu.</p>
+    <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>-->
+
+    <article>
+    <form id="deleteProduct" method="POST" action="/deleteProduct">
+        <input id="delProduct" type="hidden" name="ID" value="">
+    </form>
+    </article>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <script src="/shoppingCart.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $(".add-to-cart").click(function (event) {
+                event.preventDefault();
+                var name = $(this).attr("data-name");
+                var price = Number($(this).attr("data-price"));
+                var id = Number($(this).attr("data-id"));
+                shoppingCart.addItemToCart(name, price, 1, id);
+                displayCart();
+            });
+            $("#clear-cart").click(function (event) {
+                shoppingCart.clearCart();
+                displayCart();
+            });
+            function displayCart() {
+                var cartArray = shoppingCart.listCart();
+                console.log(cartArray);
+                var output = "";
+                for (var i in cartArray) {
+                    output += "<li>"
+                        + cartArray[i].name
+                        + " <input class='item-count' name='quantity' type='number' data-name='"
+                        + cartArray[i].name
+                        + "' value='" + cartArray[i].count + "' >"
+                        + " x " + cartArray[i].price
+                        + " = " + cartArray[i].total
+                        + " <button class='plus-item' data-name='"
+                        + cartArray[i].name + "'>+</button>"
+                        + " <button class='subtract-item' data-name='"
+                        + cartArray[i].name + "'>-</button>"
+                        + " <button class='delete-item' data-name='"
+                        + cartArray[i].name + "'>X</button>"
+                        +" <input type='hidden' name='id' value='" + cartArray[i].id + "'>"
+                        + "</li>"
+                }
+                $("#show-cart").html(output);
+                $("#count-cart").html(shoppingCart.countCart());
+                $("#total-cart").html(shoppingCart.totalCart());
+            }
+
+            $("#show-cart").on("click", ".delete-item", function (event) {
+                var name = $(this).attr("data-name");
+                shoppingCart.removeItemFromCartAll(name);
+                displayCart();
+            });
+            $("#show-cart").on("click", ".subtract-item", function (event) {
+                var name = $(this).attr("data-name");
+                shoppingCart.removeItemFromCart(name);
+                displayCart();
+            });
+            $("#show-cart").on("click", ".plus-item", function (event) {
+                var name = $(this).attr("data-name");
+                shoppingCart.addItemToCart(name, 0, 1);
+                displayCart();
+            });
+            $("#show-cart").on("change", ".item-count", function (event) {
+                var name = $(this).attr("data-name");
+                var count = Number($(this).val());
+                shoppingCart.setCountForItem(name, count);
+                displayCart();
+            });
+            displayCart();
+        });
+    </script>
+
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+
+        function deleteProduct(id){
+            $('#delProduct').val(id);
+            // submit the form
+            $('#deleteProduct')[0].submit();
+        }
+
+        function placeOrder(obj){
+            $('#placeOrd').val(obj);
+            // submit the form
+            $('#placeOrder')[0].submit();
+        }
+
+        function submitFORM(path, params, method) {
+            method = method || "post";
+
+            var form = document.createElement("form");
+            form.setAttribute("method", method);
+            form.setAttribute("action", path);
+
+            //Move the submit function to another variable
+            //so that it doesn't get overwritten.
+            form._submit_function_ = form.submit;
+
+            for(var key in params) {
+                if(params.hasOwnProperty(key)) {
+                    var hiddenField = document.createElement("input");
+                    hiddenField.setAttribute("type", "hidden");
+                    hiddenField.setAttribute("name", key);
+                    hiddenField.setAttribute("value", params[key]);
+
+                    form.appendChild(hiddenField);
+                }
+            }
+
+            document.body.appendChild(form);
+            form._submit_function_();
+        }
+
+    </script>
